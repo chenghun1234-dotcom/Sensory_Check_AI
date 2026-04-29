@@ -1,0 +1,242 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Sensory-Check AI API",
+    "description": "Quantify product taste, durability & sensory profiles for voice shopping AI agents. Distills raw product URLs into structured sensory data powered by LLaMA 3.1.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Sensory-Check AI Support"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://sensorycheckai.eieu6789.workers.dev",
+      "description": "Production Server"
+    }
+  ],
+  "paths": {
+    "/analyze": {
+      "post": {
+        "summary": "Analyze a single product URL",
+        "description": "Scrapes product metadata and uses AI to generate a sensory profile including taste, durability, and a voice-friendly summary.",
+        "operationId": "analyzeProduct",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeRequest"
+              },
+              "example": {
+                "product_url": "https://amazon.com/dp/B08N5WRWNW",
+                "focus": ["taste", "context"],
+                "language": "en"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful analysis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensoryProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request (missing URL or malformed JSON)"
+          },
+          "502": {
+            "description": "Scraping failed or product not found"
+          }
+        }
+      }
+    },
+    "/analyze/batch": {
+      "post": {
+        "summary": "Analyze multiple product URLs",
+        "description": "Analyzes up to 5 products in a single request. Leverages cache for sub-100ms response times on previously analyzed items.",
+        "operationId": "batchAnalyzeProducts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchAnalyzeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch analysis results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SensoryProfile"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Service health check",
+        "description": "Verifies that the Cloudflare Worker, KV cache, D1 database, and AI bindings are all functional.",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "version": { "type": "string", "example": "1.0.0" },
+                    "services": {
+                      "type": "object",
+                      "properties": {
+                        "kv": { "type": "string" },
+                        "d1": { "type": "string" },
+                        "ai": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnalyzeRequest": {
+        "type": "object",
+        "required": ["product_url"],
+        "properties": {
+          "product_url": {
+            "type": "string",
+            "description": "The URL of the product page to analyze (Amazon, Coupang, Naver, etc.)"
+          },
+          "focus": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["all", "taste", "durability", "context", "sensory"]
+            },
+            "default": ["all"]
+          },
+          "language": {
+            "type": "string",
+            "enum": ["en", "ko", "both"],
+            "default": "both"
+          },
+          "force_refresh": {
+            "type": "boolean",
+            "default": false,
+            "description": "Bypass cache and force a new AI analysis"
+          }
+        }
+      },
+      "BatchAnalyzeRequest": {
+        "type": "object",
+        "required": ["products"],
+        "properties": {
+          "products": {
+            "type": "array",
+            "maxItems": 5,
+            "items": {
+              "$ref": "#/components/schemas/AnalyzeRequest"
+            }
+          }
+        }
+      },
+      "SensoryProfile": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "product_id": { "type": "string" },
+          "product_name": { "type": "string" },
+          "product_type": { "type": "string", "enum": ["food", "electronics", "beauty", "fashion", "general"] },
+          "avg_rating": { "type": "number" },
+          "review_count": { "type": "integer" },
+          "sensory_scores": {
+            "type": "object",
+            "properties": {
+              "taste": {
+                "type": "object",
+                "properties": {
+                  "sweetness": { "type": "number", "nullable": true },
+                  "acidity": { "type": "number", "nullable": true },
+                  "crunchiness": { "type": "number", "nullable": true },
+                  "richness": { "type": "number", "nullable": true },
+                  "spiciness": { "type": "number", "nullable": true }
+                }
+              },
+              "durability": {
+                "type": "object",
+                "properties": {
+                  "grade": { "type": "string", "example": "B" },
+                  "score": { "type": "number" },
+                  "confidence": { "type": "number" }
+                }
+              },
+              "context": {
+                "type": "object",
+                "properties": {
+                  "primary_use": { "type": "string" },
+                  "scenarios": { "type": "array", "items": { "type": "string" } }
+                }
+              },
+              "sensory": {
+                "type": "object",
+                "properties": {
+                  "summary": { "type": "string" },
+                  "texture": { "type": "string" },
+                  "visual": { "type": "string" }
+                }
+              },
+              "noise_filter": {
+                "type": "object",
+                "properties": {
+                  "score": { "type": "number" },
+                  "ad_review_ratio": { "type": "number" }
+                }
+              }
+            }
+          },
+          "voice_summary": {
+            "type": "object",
+            "properties": {
+              "en": { "type": "string" },
+              "ko": { "type": "string" }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "cached": { "type": "boolean" },
+              "analyzed_at": { "type": "string", "format": "date-time" },
+              "response_ms": { "type": "integer" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
