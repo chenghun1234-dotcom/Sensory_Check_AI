@@ -10,7 +10,7 @@ const PLATFORM_PATTERNS = {
   amazon:  /amazon\.(com|co\.jp|co\.uk|de|fr|ca)/i,
   coupang: /coupang\.com/i,
   gmarket: /gmarket\.(co\.kr|com)/i,
-  11st:    /11st\.co\.kr/i,
+  "11st":    /11st\.co\.kr/i,
   naver:   /smartstore\.naver\.com|naver\.com\/shopping/i,
 };
 

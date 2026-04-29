@@ -1,4 +1,4 @@
-name = "sensory-check-ai"
+name = "sensorycheckai"
 main = "src/index.ts"
 compatibility_date = "2024-05-29"
 compatibility_flags = ["nodejs_compat"]
@@ -8,7 +8,7 @@ compatibility_flags = ["nodejs_compat"]
 # ──────────────────────────────────────────
 [[kv_namespaces]]
 binding = "SENSORY_CACHE"
-id = "REPLACE_WITH_YOUR_KV_ID"          # wrangler kv namespace create sensory-cache
+id = "09bcff7604ee4d3e9ed788edf36f0dc2"
 
 # ──────────────────────────────────────────
 # D1 Database — Permanent Analysis Results
@@ -16,7 +16,7 @@ id = "REPLACE_WITH_YOUR_KV_ID"          # wrangler kv namespace create sensory-c
 [[d1_databases]]
 binding = "SENSORY_DB"
 database_name = "sensory-check-db"
-database_id = "REPLACE_WITH_YOUR_D1_ID" # wrangler d1 create sensory-check-db
+database_id = "05634685-c03c-4bad-93ca-930eb1fa668f"
 
 # ──────────────────────────────────────────
 # Workers AI — Llama 3.1 8B Instruct
