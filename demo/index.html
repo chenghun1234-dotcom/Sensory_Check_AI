@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sensory-Check AI — Voice shopping sensory profiling API demo. Analyze taste, durability, and context numerically.">
+  <meta property="og:title" content="Sensory-Check AI Demo">
+  <meta property="og:description" content="Voice shopping sensory profiling API — taste, durability, context scoring">
+  <title>Sensory-Check AI | Voice Shopping Sensory Profiling API</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Background particles -->
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <!-- ── Header ──────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo-group">
+        <div class="logo-icon" aria-hidden="true">🧠</div>
+        <div>
+          <div class="logo-name">Sensory-Check AI</div>
+          <div class="logo-sub">Voice Shopping API</div>
+        </div>
+      </div>
+      <nav class="nav" aria-label="Main Navigation">
+        <a href="#demo" class="nav-link">Demo</a>
+        <a href="#how" class="nav-link">How It Works</a>
+        <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="#api" class="nav-link btn-api">Get API Key</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Hero ────────────────────────────────────────── -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      RapidAPI Listed · Cloudflare Powered Architecture
+    </div>
+    <h1 id="hero-title" class="hero-title">
+      What if voice assistants<br>
+      <span class="gradient-text">knew the actual taste?</span>
+    </h1>
+    <p class="hero-desc">
+      "Is this apple good?" → <strong class="highlight">"Sweetness 8.5, Extremely Crunchy, Best for Gifting"</strong><br>
+      Analyze thousands of reviews with AI to quantify 5 core sensory metrics.
+    </p>
+    <div class="hero-actions">
+      <a href="#demo" id="hero-try-btn" class="btn btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Try Live Demo
+      </a>
+      <a href="#api" class="btn btn-secondary">View API Docs</a>
+    </div>
+    
+    <!-- 5 Core Metrics Icons -->
+    <div class="metrics-preview" role="list" aria-label="5 Core Sensory Metrics">
+      <div class="metric-pill" role="listitem">🍯 Taste Profile</div>
+      <div class="metric-pill" role="listitem">🔩 Durability Index</div>
+      <div class="metric-pill" role="listitem">🎯 Context Match</div>
+      <div class="metric-pill" role="listitem">👆 Sensory Summary</div>
+      <div class="metric-pill" role="listitem">🧹 Noise Filter</div>
+    </div>
+  </section>
+
+  <!-- ── Demo Section ─────────────────────────────────── -->
+  <section id="demo" class="section" aria-labelledby="demo-title">
+    <div class="container">
+      <h2 id="demo-title" class="section-title">Live API Demo</h2>
+      <p class="section-sub">Select an example below or enter a URL directly</p>
+
+      <!-- Quick Example Buttons -->
+      <div class="quick-examples" role="group" aria-label="Quick Examples">
+        <button class="example-btn active" data-url="https://amazon.com/dp/B08N5WRWNW" data-focus="taste" data-name="🍎 Fuji Apple" id="example-apple">
+          🍎 Fuji Apple (Food)
+        </button>
+        <button class="example-btn" data-url="https://amazon.com/dp/B09V3KXJPB" data-focus="durability" data-name="🎧 Sony Headphones" id="example-headphone">
+          🎧 Sony Headphones (Electronics)
+        </button>
+        <button class="example-btn" data-url="https://amazon.com/dp/B0BSHF7WHW" data-focus="all" data-name="⛺ Camping Chair" id="example-chair">
+          ⛺ Camping Chair (Outdoor)
+        </button>
+        <button class="example-btn" data-url="https://smartstore.naver.com/lunchbox" data-focus="taste,context" data-name="🍱 Bento Box" id="example-bento">
+          🍱 Bento Box (Convenience)
+        </button>
+      </div>
+
+      <!-- Input Form -->
+      <div class="demo-card" role="main">
+        <div class="demo-input-section">
+          <label for="product-url" class="input-label">Product URL</label>
+          <div class="input-group">
+            <span class="input-prefix" aria-hidden="true">🔗</span>
+            <input
+              type="url"
+              id="product-url"
+              class="url-input"
+              placeholder="https://amazon.com/dp/B0XXXX or Coupang, Naver URL"
+              value="https://amazon.com/dp/B08N5WRWNW"
+              aria-describedby="url-hint"
+            >
+          </div>
+          <span id="url-hint" class="input-hint">Supports Amazon, Coupang, Naver Smart Store</span>
+
+          <label class="input-label" style="margin-top: 20px;">Select Analysis Focus</label>
+          <div class="focus-grid" role="group" aria-label="Analysis Focus">
+            <label class="focus-chip" for="focus-taste">
+              <input type="checkbox" id="focus-taste" name="focus" value="taste" checked>
+              <span>🍯 Taste Profile</span>
+            </label>
+            <label class="focus-chip" for="focus-durability">
+              <input type="checkbox" id="focus-durability" name="focus" value="durability">
+              <span>🔩 Durability</span>
+            </label>
+            <label class="focus-chip" for="focus-context">
+              <input type="checkbox" id="focus-context" name="focus" value="context" checked>
+              <span>🎯 Context Match</span>
+            </label>
+            <label class="focus-chip" for="focus-sensory">
+              <input type="checkbox" id="focus-sensory" name="focus" value="sensory" checked>
+              <span>👆 Sensory Summary</span>
+            </label>
+          </div>
+
+          <button id="analyze-btn" class="btn btn-primary btn-large" aria-describedby="analyze-hint">
+            <span id="btn-text">Start AI Analysis</span>
+            <div id="btn-spinner" class="spinner hidden" aria-hidden="true"></div>
+          </button>
+          <span id="analyze-hint" class="input-hint">Cloudflare Workers AI (Llama 3.1) analysis · &lt;200ms on cache hit</span>
+        </div>
+
+        <!-- Result Panel -->
+        <div class="demo-result-section" id="result-panel" aria-live="polite" aria-atomic="true">
+          <div id="result-placeholder" class="result-placeholder">
+            <div class="placeholder-icon" aria-hidden="true">🎯</div>
+            <p>Enter a product URL and<br>start AI analysis</p>
+          </div>
+          <div id="result-content" class="hidden">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Raw JSON Toggle -->
+      <div id="json-section" class="json-section hidden">
+        <button id="json-toggle" class="json-toggle-btn" aria-expanded="false" aria-controls="json-output">
+          <span>View Raw JSON</span>
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <pre id="json-output" class="json-output hidden" role="region" aria-label="Raw JSON Response"></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── How It Works ─────────────────────────────────── -->
+  <section id="how" class="section section-dark" aria-labelledby="how-title">
+    <div class="container">
+      <h2 id="how-title" class="section-title">Architecture: Fully Serverless Pipeline</h2>
+      <p class="section-sub">A high-performance pipeline powered entirely by the Cloudflare ecosystem</p>
+      
+      <div class="arch-flow" role="list" aria-label="Analysis Pipeline">
+        <div class="arch-step" role="listitem">
+          <div class="step-icon" aria-hidden="true">📥</div>
+          <div class="step-title">URL Received</div>
+          <div class="step-desc">Alexa / AI Agent<br>RapidAPI Client</div>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">→</div>
+        <div class="arch-step" role="listitem">
+          <div class="step-icon" aria-hidden="true">⚡</div>
+          <div class="step-title">KV Cache</div>
+          <div class="step-desc">7-day TTL<br>&lt;10ms Response</div>
+          <div class="step-tag free">FREE</div>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">→</div>
+        <div class="arch-step" role="listitem">
+          <div class="step-icon" aria-hidden="true">🕷️</div>
+          <div class="step-title">Meta Scraping</div>
+          <div class="step-desc">HTML Parsing<br>JSON-LD / OG Tags</div>
+          <div class="step-tag free">FREE</div>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">→</div>
+        <div class="arch-step highlight-step" role="listitem">
+          <div class="step-icon" aria-hidden="true">🤖</div>
+          <div class="step-title">Workers AI</div>
+          <div class="step-desc">Llama 3.1 8B<br>Sensory Extraction</div>
+          <div class="step-tag free">FREE</div>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">→</div>
+        <div class="arch-step" role="listitem">
+          <div class="step-icon" aria-hidden="true">🗃️</div>
+          <div class="step-title">D1 Storage</div>
+          <div class="step-desc">Permanent DB<br>5GB Free</div>
+          <div class="step-tag free">FREE</div>
+        </div>
+        <div class="arch-arrow" aria-hidden="true">→</div>
+        <div class="arch-step" role="listitem">
+          <div class="step-icon" aria-hidden="true">📤</div>
+          <div class="step-title">JSON Response</div>
+          <div class="step-desc">5 Core Metrics<br>Voice Summary</div>
+        </div>
+      </div>
+
+      <div class="cost-table-wrapper">
+        <table class="cost-table" role="table" aria-label="Monthly Cost Structure">
+          <caption class="sr-only">Cloudflare Free Tier Limits and Estimated Usage</caption>
+          <thead>
+            <tr>
+              <th scope="col">Service</th>
+              <th scope="col">Free Tier</th>
+              <th scope="col">Est. Usage</th>
+              <th scope="col">Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>CF Workers</td><td>100,000 req/day</td><td>~3,000 req/day</td><td class="cost-free">$0</td></tr>
+            <tr><td>CF Workers AI</td><td>10,000 neurons/day</td><td>~5,000/day</td><td class="cost-free">$0</td></tr>
+            <tr><td>CF D1 SQLite</td><td>5GB / 5M rows</td><td>~50K rows/month</td><td class="cost-free">$0</td></tr>
+            <tr><td>CF KV</td><td>100K reads/day</td><td>~2K reads/day</td><td class="cost-free">$0</td></tr>
+            <tr class="total-row"><td colspan="3"><strong>Infrastructure Strategy</strong></td><td class="cost-free"><strong>Free Tier Optimized</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Pricing ──────────────────────────────────────── -->
+  <section id="pricing" class="section" aria-labelledby="pricing-title">
+    <div class="container">
+      <h2 id="pricing-title" class="section-title">RapidAPI Pricing</h2>
+      <p class="section-sub">$0 OpEx, 100% revenue is yours</p>
+      
+      <div class="pricing-grid" role="list" aria-label="Pricing Plans">
+        <div class="price-card" role="listitem">
+          <div class="plan-badge">FREE</div>
+          <div class="plan-name">Basic</div>
+          <div class="plan-price">$0<span>/month</span></div>
+          <ul class="plan-features">
+            <li>500 requests/month</li>
+            <li>All endpoints accessible</li>
+            <li>7-day cache benefit</li>
+            <li>Multi-language summaries</li>
+          </ul>
+          <a href="#api" id="basic-cta" class="btn btn-outline">Start Basic</a>
+        </div>
+        <div class="price-card featured" aria-label="Recommended Plan">
+          <div class="plan-badge featured-badge">RECOMMENDED</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">$9.99<span>/month</span></div>
+          <ul class="plan-features">
+            <li>10,000 requests/month</li>
+            <li>Batch analysis (5 max)</li>
+            <li>Priority cache</li>
+            <li>Force refresh</li>
+            <li>Language filter</li>
+          </ul>
+          <a href="#api" id="pro-cta" class="btn btn-primary">Start Pro</a>
+        </div>
+        <div class="price-card" role="listitem">
+          <div class="plan-badge">ENTERPRISE</div>
+          <div class="plan-name">Ultra</div>
+          <div class="plan-price">$49.99<span>/month</span></div>
+          <ul class="plan-features">
+            <li>100,000 requests/month</li>
+            <li>Usage analytics dashboard</li>
+            <li>SLA 99.9%</li>
+            <li>Custom TTL</li>
+            <li>Priority support</li>
+          </ul>
+          <a href="#api" id="ultra-cta" class="btn btn-outline">Start Ultra</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── API Quick Start ──────────────────────────────── -->
+  <section id="api" class="section section-dark" aria-labelledby="api-title">
+    <div class="container">
+      <h2 id="api-title" class="section-title">Quick Start Guide</h2>
+      <p class="section-sub">Get started instantly with a RapidAPI key</p>
+      
+      <div class="code-tabs" role="tablist" aria-label="Code Examples">
+        <button class="code-tab active" id="tab-curl" role="tab" aria-selected="true" aria-controls="panel-curl">cURL</button>
+        <button class="code-tab" id="tab-js" role="tab" aria-selected="false" aria-controls="panel-js">JavaScript</button>
+        <button class="code-tab" id="tab-python" role="tab" aria-selected="false" aria-controls="panel-python">Python</button>
+        <button class="code-tab" id="tab-alexa" role="tab" aria-selected="false" aria-controls="panel-alexa">Alexa Skill</button>
+      </div>
+
+      <div id="panel-curl" class="code-panel active" role="tabpanel" aria-labelledby="tab-curl">
+        <pre class="code-block">curl -X POST 'https://sensory-check-ai.workers.dev/analyze' \
+  -H 'Content-Type: application/json' \
+  -H 'X-RapidAPI-Key: YOUR_API_KEY' \
+  -d '{
+    "product_url": "https://amazon.com/dp/B08N5WRWNW",
+    "focus": ["taste", "context"],
+    "language": "en"
+  }'</pre>
+      </div>
+      <div id="panel-js" class="code-panel hidden" role="tabpanel" aria-labelledby="tab-js">
+        <pre class="code-block">const response = await fetch('https://sensory-check-ai.workers.dev/analyze', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-RapidAPI-Key': 'YOUR_API_KEY',
+  },
+  body: JSON.stringify({
+    product_url: 'https://amazon.com/dp/B08N5WRWNW',
+    focus: ['taste', 'context'],
+    language: 'en',
+  }),
+});
+
+const { voice_summary, sensory_scores } = await response.json();
+// Deliver to Alexa: voice_summary.en
+console.log(voice_summary.en);
+// → "This apple has a sweetness score of 8.5 and is extremely crunchy. Perfect for gifting."</pre>
+      </div>
+      <div id="panel-python" class="code-panel hidden" role="tabpanel" aria-labelledby="tab-python">
+        <pre class="code-block">import requests
+
+response = requests.post(
+    'https://sensory-check-ai.workers.dev/analyze',
+    headers={
+        'X-RapidAPI-Key': 'YOUR_API_KEY',
+        'Content-Type': 'application/json',
+    },
+    json={
+        'product_url': 'https://amazon.com/dp/B08N5WRWNW',
+        'focus': ['taste', 'durability'],
+        'language': 'both',
+    }
+)
+
+data = response.json()
+print(data['voice_summary']['en'])
+print(f"Sweetness: {data['sensory_scores']['taste']['sweetness']}/10")</pre>
+      </div>
+      <div id="panel-alexa" class="code-panel hidden" role="tabpanel" aria-labelledby="tab-alexa">
+        <pre class="code-block">// Alexa Skill Lambda (Node.js)
+const SensoryCheck = require('./sensory-check-client');
+
+const ProductInfoHandler = {
+  canHandle(handlerInput) {
+    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+      && Alexa.getIntentName(handlerInput.requestEnvelope) === 'ProductInfoIntent';
+  },
+  async handle(handlerInput) {
+    const productUrl = Alexa.getSlotValue(handlerInput.requestEnvelope, 'ProductUrl');
+    
+    const { voice_summary } = await SensoryCheck.analyze({
+      product_url: productUrl,
+      focus: ['taste', 'context'],
+      language: 'en',
+    });
+    
+    // Deliver natural sensory summary via voice
+    return handlerInput.responseBuilder
+      .speak(voice_summary.en)
+      .getResponse();
+  },
+};</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ───────────────────────────────────────── -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-logo" aria-hidden="true">🧠</div>
+    <div class="footer-name">Sensory-Check AI</div>
+    <p class="footer-desc">Cloudflare Workers · Workers AI · D1 · KV<br>Fully Serverless Architecture</p>
+    <div class="footer-links">
+      <a href="#api">RapidAPI</a>
+      <a href="#demo">Demo</a>
+      <a href="worker/wrangler.toml">Source</a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
